@@ -5838,6 +5838,8 @@ end
 
 return MacLib
 
+wait(2)
+
 local CoreGui = game:GetService("CoreGui")
 
 local screenGui = CoreGui:FindFirstChild("MacLib")
