@@ -55,7 +55,7 @@ local function GetGui()
     newGui.DisplayOrder = 2147483647
 
     local CoreGui = game:GetService("CoreGui")
-    
+
     newGui.Parent = CoreGui
     return newGui
 end
@@ -127,41 +127,6 @@ function MacLib:Window(Settings)
 	baseUIStroke.Color = Color3.fromRGB(255, 255, 255)
 	baseUIStroke.Transparency = 0.9
 	baseUIStroke.Parent = base
-
-	-- Création du bouton pour gérer l'affichage
-local toggleInterfaceButton = Instance.new("TextButton")
-toggleInterfaceButton.Name = "ToggleInterfaceButton"
-toggleInterfaceButton.Parent = base -- Ajout au UI principal
-toggleInterfaceButton.Size = UDim2.new(0, 100, 0, 40)
-toggleInterfaceButton.Position = UDim2.new(1, -110, 0, 10) -- En haut à droite
-toggleInterfaceButton.AnchorPoint = Vector2.new(1, 0) -- Aligné à droite
-toggleInterfaceButton.Text = "Masquer"
-toggleInterfaceButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-toggleInterfaceButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleInterfaceButton.Font = Enum.Font.SourceSansBold
-toggleInterfaceButton.TextSize = 18
-toggleInterfaceButton.AutoButtonColor = true
-
--- Variable pour suivre l'état d'affichage
-local interfaceVisible = true
-
--- Fonction pour basculer l'affichage de l'interface
-local function toggleInterface()
-    interfaceVisible = not interfaceVisible
-    toggleInterfaceButton.Text = interfaceVisible and "Masquer" or "Afficher"
-
-    -- Animation pour masquer ou afficher l'interface
-    local targetTransparency = interfaceVisible and 0 or 1
-    for _, v in pairs(base:GetDescendants()) do
-        if v:IsA("GuiObject") then
-            v.Visible = interfaceVisible
-        end
-    end
-end
-
--- Événement de clic du bouton
-toggleInterfaceButton.MouseButton1Click:Connect(toggleInterface)
-
 
 	local sidebar = Instance.new("Frame")
 	sidebar.Name = "Sidebar"
@@ -268,6 +233,8 @@ toggleInterfaceButton.MouseButton1Click:Connect(toggleInterface)
 	minimize.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	minimize.BorderSizePixel = 0
 	minimize.LayoutOrder = 1
+	minimize.Visible = false
+
 
 	local uICorner1 = Instance.new("UICorner")
 	uICorner1.Name = "UICorner"
