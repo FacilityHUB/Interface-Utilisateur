@@ -5837,38 +5837,3 @@ function MacLib:Demo()
 end
 
 return MacLib
-
-wait(2)
-
-local CoreGui = game:GetService("CoreGui")
-
-local screenGui = CoreGui:FindFirstChild("MacLib")
-if not screenGui then
-    warn("Le ScreenGui 'MacLib' n'existe pas dans CoreGui")
-    return
-end
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "ToggleButtonGui"
-gui.Parent = CoreGui
-
-local button = Instance.new("ImageButton") 
-
-button.Size = UDim2.new(0.03, 0, 0.06, 0) 
-
-button.Position = UDim2.new(0.5, -button.Size.X.Offset / 2, 0, 10)
-
-button.BackgroundColor3 = Color3.fromRGB(255, 255, 255) 
-button.Image = "http://www.roblox.com/asset/?id=125405532882780" 
-button.BackgroundTransparency = 0 
-button.Parent = gui
-button.Active = true
-button.Draggable = true 
-
-local isVisible = screenGui.Enabled
-
-button.MouseButton1Click:Connect(function()
-    isVisible = not isVisible
-    screenGui.Enabled = isVisible
-end)
-
