@@ -1,0 +1,234 @@
+local Main = {}
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local plr = Players.LocalPlayer
+local mouse = plr:GetMouse()
+
+Configuration = {
+    Movement = {
+        -- WalkSpeed
+        TargetWalkSpeed = 50,
+        DefaultWalkSpeed = 16,
+        WalkSpeedEnabled = true,
+
+        -- JumpPower
+        TargetJumpPower = 60,
+        DefaultJumpPower = 40,
+        JumpEnabled = false,
+
+        -- MultiJump
+        MultiJumpEnabled = false,
+
+        -- Fly
+        SpeedFly = 100,
+        FlyEnabled = false,
+        FlyKeybind = "F",
+
+        -- Noclip
+        NoclipEnabled = false
+    }
+}
+
+local flying = false
+local speed = 0
+local maxspeed = Configuration.Movement.SpeedFly
+local ctrl = { f = 0, b = 0, l = 0, r = 0 }
+local torso = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+local initialCollisions = {}
+local noclipConnection
+
+function Main.Load()
+-- Appliquer WalkSpeed et JumpPower
+local function updateMovement()
+    if plr and plr.Character then
+        local humanoid = plr.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = Configuration.Movement.WalkSpeedEnabled and Configuration.Movement.TargetWalkSpeed or Configuration.Movement.DefaultWalkSpeed
+            humanoid.JumpPower = Configuration.Movement.JumpEnabled and Configuration.Movement.TargetJumpPower or Configuration.Movement.DefaultJumpPower
+        end
+    end
+end
+
+-- Gestion du Fly
+local function StartFlying()
+    local humanoid = plr.Character and plr.Character:FindFirstChild("Humanoid")
+    if not torso or not humanoid then return end
+
+    local bg = Instance.new("BodyGyro", torso)
+    bg.P = 9e4
+    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.cframe = torso.CFrame
+
+    local bv = Instance.new("BodyVelocity", torso)
+    bv.velocity = Vector3.new(0, 0, 0)
+    bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+
+    speed = maxspeed
+    humanoid.PlatformStand = true
+
+    repeat
+        task.wait()
+        local moveVector = (game.Workspace.CurrentCamera.CFrame.lookVector * (ctrl.f + ctrl.b))
+            + ((game.Workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * 0.2, 0).p) 
+            - game.Workspace.CurrentCamera.CFrame.p)
+
+        bv.velocity = moveVector * speed
+        bg.cframe = game.Workspace.CurrentCamera.CFrame * CFrame.Angles(-math.rad((ctrl.f + ctrl.b) * 50 * speed / maxspeed), 0, 0)
+    until not flying
+
+    bg:Destroy()
+    bv:Destroy()
+    humanoid.PlatformStand = false
+end
+
+local function ToggleFlying()
+    flying = not flying
+    if flying then
+        if torso then
+            StartFlying()
+        end
+    end
+end
+
+-- Gestion du Noclip
+local function SaveInitialCollisions()
+    if plr.Character then
+        for _, child in pairs(plr.Character:GetDescendants()) do
+            if child:IsA("BasePart") then
+                initialCollisions[child] = child.CanCollide
+            end
+        end
+    end
+end
+
+local function SetNoclip(state)
+    if plr.Character then
+        for _, child in pairs(plr.Character:GetDescendants()) do
+            if child:IsA("BasePart") then
+                child.CanCollide = not state
+            end
+        end
+    end
+end
+
+local function UpdateNoclip()
+    if Configuration.Movement.NoclipEnabled then
+        SaveInitialCollisions()
+        if not noclipConnection then
+            noclipConnection = RunService.Stepped:Connect(function()
+                SetNoclip(true)
+            end)
+        end
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+        SetNoclip(false)
+    end
+end
+
+-- Détection des touches pour le Fly et le Noclip
+mouse.KeyDown:Connect(function(key)
+    key = key:lower()
+    if key == "w" then
+        ctrl.f = 1
+    elseif key == "s" then
+        ctrl.b = -1
+    elseif key == "a" then
+        ctrl.l = -1
+    elseif key == "d" then
+        ctrl.r = 1
+    elseif key == Configuration.Movement.FlyKeybind:lower() then
+        ToggleFlying()
+    end
+end)
+
+mouse.KeyUp:Connect(function(key)
+    key = key:lower()
+    if key == "w" then
+        ctrl.f = 0
+    elseif key == "s" then
+        ctrl.b = 0
+    elseif key == "a" then
+        ctrl.l = 0
+    elseif key == "d" then
+        ctrl.r = 0
+    end
+end)
+
+-- Gestion de la réapparition du personnage
+local function onCharacterAdded(character)
+    torso = character:WaitForChild("HumanoidRootPart")
+    updateMovement()
+
+    if flying then
+        StartFlying()
+    end
+
+    if Configuration.Movement.NoclipEnabled then
+        UpdateNoclip()
+    end
+
+    local humanoid = character:FindFirstChild("Humanoid")
+    humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+        if Configuration.Movement.WalkSpeedEnabled and humanoid.WalkSpeed ~= Configuration.Movement.TargetWalkSpeed then
+            humanoid.WalkSpeed = Configuration.Movement.TargetWalkSpeed
+        end
+    end)
+
+    humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
+        if Configuration.Movement.JumpEnabled and humanoid.JumpPower ~= Configuration.Movement.TargetJumpPower then
+            humanoid.JumpPower = Configuration.Movement.TargetJumpPower
+        end
+    end)
+end
+
+plr.CharacterAdded:Connect(onCharacterAdded)
+if plr.Character then
+    onCharacterAdded(plr.Character)
+end
+
+plr.CharacterRemoving:Connect(function()
+    flying = false
+end)
+
+-- MultiJump (saut infini)
+UserInputService.JumpRequest:Connect(function()
+    if Configuration.Movement.MultiJumpEnabled and plr.Character then
+        local humanoid = plr.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid:ChangeState("Jumping")
+        end
+    end
+end)
+
+-- Fonctions pour activer/désactiver les fonctionnalités
+local function setWalkSpeed(state)
+    Configuration.Movement.WalkSpeedEnabled = state
+    updateMovement()
+end
+
+local function setJumpPower(state)
+    Configuration.Movement.JumpEnabled = state
+    updateMovement()
+end
+
+local function setFly(state)
+    Configuration.Movement.FlyEnabled = state
+    if state then
+        ToggleFlying()
+    else
+        flying = false
+    end
+end
+
+local function setNoclip(state)
+    Configuration.Movement.NoclipEnabled = state
+    UpdateNoclip()
+end
+end
+
+return Main
