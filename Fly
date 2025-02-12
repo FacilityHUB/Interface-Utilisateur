@@ -83,7 +83,7 @@ function Main.Load()
                 else
                     gyro.cframe = workspace.CurrentCamera.CoordinateFrame
                 end
-            until flying == false
+            until Main.Configuration.Fly == false
             if gyro then gyro:Destroy() end
             if pos then pos:Destroy() end
             flying=false
@@ -100,13 +100,11 @@ function Main.Load()
                 keys.a=true
             elseif key=="d" then
                 keys.d=true
-            elseif key:lower()==Main.Configuration.KeyFly:lower() then
-                if flying==true then
-                    flying=false
-                else
-                    flying=true
+            elseif key:lower() == Main.Configuration.KeyFly:lower() then
+                Main.Configuration.Fly = not Main.Configuration.Fly
+                if Main.Configuration.Fly then
                     start()
-                end
+                end            
             end
         end)
         e2=mouse.KeyUp:connect(function(key)
@@ -123,6 +121,6 @@ function Main.Load()
         if Main.Configuration.Fly then
             start()
         end
-    end
+end
 
 return Main
