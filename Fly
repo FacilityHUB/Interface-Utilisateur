@@ -1,13 +1,13 @@
+local RunService = game:GetService("RunService")
+
 local Main = {}
 
 Main.Configuration = {
     Fly = false,        -- État initial du vol (false = désactivé)
-    SpeedFly = 7.5,    -- Vitesse de vol
-    KeyFly = "x"       -- Touche pour activer/désactiver le vol
+    SpeedFly = 7.5,     -- Vitesse de vol
+    KeyFly = "x"        -- Touche pour activer/désactiver le vol
 }
 
-function Main.Load()
-    
 local plr = game.Players.LocalPlayer
 local mouse = plr:GetMouse()
 local localplayer = plr
@@ -41,10 +41,10 @@ end)
 workspace:WaitForChild("Core")
 
 local torso = workspace.Core
-local flying = Main.Configuration.Fly 
-local speed = Main.Configuration.SpeedFly
 local keys = {a=false, d=false, w=false, s=false}
 local e1, e2
+local flying = false
+local speed = Main.Configuration.SpeedFly
 
 local function stop()
     flying = false
@@ -52,6 +52,7 @@ local function stop()
 end
 
 local function start()
+    flying = true
     local pos = Instance.new("BodyPosition", torso)
     local gyro = Instance.new("BodyGyro", torso)
     pos.Name = "EPIXPOS"
@@ -61,8 +62,7 @@ local function start()
     gyro.cframe = torso.CFrame
     
     repeat
-        wait()
-        flying = Main.Configuration.Fly  -- Synchronisation en temps réel
+        RunService.Heartbeat:Wait()
         localplayer.Character.Humanoid.PlatformStand = true
         local new = gyro.cframe - gyro.cframe.p + pos.position
         
@@ -87,16 +87,9 @@ local function start()
         end
         
         pos.position = new.p
-        
-        if keys.w then
-            gyro.cframe = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(speed * 0), 0, 0)
-        elseif keys.s then
-            gyro.cframe = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(math.rad(speed * 0), 0, 0)
-        else
-            gyro.cframe = workspace.CurrentCamera.CoordinateFrame
-        end
-    until not Main.Configuration.Fly  -- Arrêt propre basé sur la config
-    
+        gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+    until not Main.Configuration.Fly
+
     if gyro then gyro:Destroy() end
     if pos then pos:Destroy() end
     localplayer.Character.Humanoid.PlatformStand = false
@@ -114,10 +107,7 @@ e1 = mouse.KeyDown:Connect(function(key)
     elseif key == "d" then
         keys.d = true
     elseif key:lower() == Main.Configuration.KeyFly:lower() then
-        Main.Configuration.Fly = not Main.Configuration.Fly  -- Mise à jour dynamique
-        if Main.Configuration.Fly then
-            start()
-        end
+        Main.Configuration.Fly = not Main.Configuration.Fly
     end
 end)
 
@@ -133,8 +123,18 @@ e2 = mouse.KeyUp:Connect(function(key)
     end
 end)
 
-if Main.Configuration.Fly then
-    start()
-end
+-- Boucle pour surveiller les changements externes de Main.Configuration.Fly
+spawn(function()
+    while true do
+        RunService.Heartbeat:Wait()
+        if Main.Configuration.Fly ~= flying then
+            if Main.Configuration.Fly then
+                start()
+            else
+                stop()
+            end
+        end
     end
+end)
+
 return Main
