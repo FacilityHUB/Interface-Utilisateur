@@ -5,125 +5,136 @@ Main.Configuration = {
     SpeedFly = 7.5,    -- Vitesse de vol
     KeyFly = "x"       -- Touche pour activer/désactiver le vol
 }
+
 function Main.Load()
-    local plr = game.Players.LocalPlayer
-        local mouse = plr:GetMouse()
     
-        localplayer = plr
+local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+local localplayer = plr
+
+if workspace:FindFirstChild("Core") then
+    workspace.Core:Destroy()
+end
+
+local Core = Instance.new("Part")
+Core.Name = "Core"
+Core.Size = Vector3.new(0.05, 0.05, 0.05)
+
+spawn(function()
+    Core.Parent = workspace
+    local Weld = Instance.new("Weld", Core)
+    Weld.Part0 = Core
+    local torsoName = "HumanoidRootPart"
     
-        if workspace:FindFirstChild("Core") then
-            workspace.Core:Destroy()
+    if localplayer.Character:FindFirstChild("Torso") then
+        torsoName = "Torso"
+    elseif localplayer.Character:FindFirstChild("UpperTorso") then
+        torsoName = "UpperTorso"
+    elseif localplayer.Character:FindFirstChild("LowerTorso") then
+        torsoName = "LowerTorso"
+    end
+    
+    Weld.Part1 = localplayer.Character[torsoName]
+    Weld.C0 = CFrame.new(0, 0, 0)
+end)
+
+workspace:WaitForChild("Core")
+
+local torso = workspace.Core
+local flying = Main.Configuration.Fly 
+local speed = Main.Configuration.SpeedFly
+local keys = {a=false, d=false, w=false, s=false}
+local e1, e2
+
+local function stop()
+    flying = false
+    Main.Configuration.Fly = false
+end
+
+local function start()
+    local pos = Instance.new("BodyPosition", torso)
+    local gyro = Instance.new("BodyGyro", torso)
+    pos.Name = "EPIXPOS"
+    pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+    pos.position = torso.Position
+    gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+    gyro.cframe = torso.CFrame
+    
+    repeat
+        wait()
+        flying = Main.Configuration.Fly  -- Synchronisation en temps réel
+        localplayer.Character.Humanoid.PlatformStand = true
+        local new = gyro.cframe - gyro.cframe.p + pos.position
+        
+        if not keys.w and not keys.s and not keys.a and not keys.d then
+            speed = 0
+            new = gyro.cframe - gyro.cframe.p + torso.Position
+        else
+            speed = Main.Configuration.SpeedFly
         end
-    
-        local Core = Instance.new("Part")
-        Core.Name = "Core"
-        Core.Size = Vector3.new(0.05, 0.05, 0.05)
-    
-        spawn(function()
-            Core.Parent = workspace
-            local Weld = Instance.new("Weld", Core)
-            Weld.Part0 = Core
-            local torsoName = "HumanoidRootPart"
-            if localplayer.Character:FindFirstChild("Torso") then
-                torsoName = "Torso"
-            elseif localplayer.Character:FindFirstChild("UpperTorso") then
-                torsoName = "UpperTorso"
-            elseif localplayer.Character:FindFirstChild("LowerTorso") then
-                torsoName = "LowerTorso"
-            end
-            Weld.Part1 = localplayer.Character[torsoName]
-            Weld.C0 = CFrame.new(0, 0, 0)
-        end)
-    
-        workspace:WaitForChild("Core")
-    
-        local torso = workspace.Core
-        flying = Main.Configuration.Fly 
-        local speed=Main.Configuration.SpeedFly
-        local keys={a=false,d=false,w=false,s=false}
-        local e1
-        local e2
-        local function start()
-            local pos = Instance.new("BodyPosition",torso)
-            local gyro = Instance.new("BodyGyro",torso)
-            pos.Name="EPIXPOS"
-            pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
-            pos.position = torso.Position
-            gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-            gyro.cframe = torso.CFrame
-            repeat
-                wait()
-                    localplayer.Character.Humanoid.PlatformStand=true
-                    local new=gyro.cframe - gyro.cframe.p + pos.position
-                    
-                    if not keys.w and not keys.s and not keys.a and not keys.d then
-                        speed = 0
-                        new = gyro.cframe - gyro.cframe.p + torso.Position
-                    else
-                        speed = Main.Configuration.SpeedFly
-                    end
-                    
-                    if keys.w then
-                        new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
-                    end
-                if keys.s then
-                    new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
-                end
-                if keys.d then
-                    new = new * CFrame.new(speed,0,0)
-                end
-                if keys.a then
-                    new = new * CFrame.new(-speed,0,0)
-                end
-                pos.position=new.p
-                if keys.w then
-                    gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(-math.rad(speed*0),0,0)
-                elseif keys.s then
-                    gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(math.rad(speed*0),0,0)
-                else
-                    gyro.cframe = workspace.CurrentCamera.CoordinateFrame
-                end
-            until Main.Configuration.Fly == false
-            if gyro then gyro:Destroy() end
-            if pos then pos:Destroy() end
-            flying=false
-            localplayer.Character.Humanoid.PlatformStand=false
-            speed=Main.Configuration.SpeedFly
+        
+        if keys.w then
+            new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
         end
-        e1=mouse.KeyDown:connect(function(key)
-            if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
-            if key=="w" then
-                keys.w=true
-            elseif key=="s" then
-                keys.s=true
-            elseif key=="a" then
-                keys.a=true
-            elseif key=="d" then
-                keys.d=true
-            elseif key:lower() == Main.Configuration.KeyFly:lower() then
-                Main.Configuration.Fly = not Main.Configuration.Fly
-                if Main.Configuration.Fly then
-                    start()
-                end            
-            end
-        end)
-        e2=mouse.KeyUp:connect(function(key)
-            if key=="w" then
-                keys.w=false
-            elseif key=="s" then
-                keys.s=false
-            elseif key=="a" then
-                keys.a=false
-            elseif key=="d" then
-                keys.d=false
-            end
-        end)
-        function Main.ToggleFly(value)
-            Main.Configuration.Fly = value
-            if value then
-                start()
-            end
+        if keys.s then
+            new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+        end
+        if keys.d then
+            new = new * CFrame.new(speed, 0, 0)
+        end
+        if keys.a then
+            new = new * CFrame.new(-speed, 0, 0)
+        end
+        
+        pos.position = new.p
+        
+        if keys.w then
+            gyro.cframe = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(speed * 0), 0, 0)
+        elseif keys.s then
+            gyro.cframe = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(math.rad(speed * 0), 0, 0)
+        else
+            gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+        end
+    until not Main.Configuration.Fly  -- Arrêt propre basé sur la config
+    
+    if gyro then gyro:Destroy() end
+    if pos then pos:Destroy() end
+    localplayer.Character.Humanoid.PlatformStand = false
+end
+
+e1 = mouse.KeyDown:Connect(function(key)
+    if not torso or not torso.Parent then stop() e1:Disconnect() e2:Disconnect() return end
+    
+    if key == "w" then
+        keys.w = true
+    elseif key == "s" then
+        keys.s = true
+    elseif key == "a" then
+        keys.a = true
+    elseif key == "d" then
+        keys.d = true
+    elseif key:lower() == Main.Configuration.KeyFly:lower() then
+        Main.Configuration.Fly = not Main.Configuration.Fly  -- Mise à jour dynamique
+        if Main.Configuration.Fly then
+            start()
         end
     end
+end)
 
+e2 = mouse.KeyUp:Connect(function(key)
+    if key == "w" then
+        keys.w = false
+    elseif key == "s" then
+        keys.s = false
+    elseif key == "a" then
+        keys.a = false
+    elseif key == "d" then
+        keys.d = false
+    end
+end)
+
+if Main.Configuration.Fly then
+    start()
+end
+    end
 return Main
