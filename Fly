@@ -95,38 +95,53 @@ local function start()
     localplayer.Character.Humanoid.PlatformStand = false
 end
 
-e1 = mouse.KeyDown:Connect(function(key)
-    if not torso or not torso.Parent then stop() e1:Disconnect() e2:Disconnect() return end
-    
-    if key == "w" then
-        keys.w = true
-    elseif key == "s" then
-        keys.s = true
-    elseif key == "a" then
-        keys.a = true
-    elseif key == "d" then
-        keys.d = true
-    elseif key:lower() == Main.Configuration.KeyFly:lower() then
-        Main.Configuration.Fly = not Main.Configuration.Fly
-    end
-end)
+-- Écoute dynamique de la touche KeyFly
+local function setupKeyListener()
+    if e1 then e1:Disconnect() end
+    if e2 then e2:Disconnect() end
 
-e2 = mouse.KeyUp:Connect(function(key)
-    if key == "w" then
-        keys.w = false
-    elseif key == "s" then
-        keys.s = false
-    elseif key == "a" then
-        keys.a = false
-    elseif key == "d" then
-        keys.d = false
-    end
-end)
+    e1 = mouse.KeyDown:Connect(function(key)
+        if not torso or not torso.Parent then stop() e1:Disconnect() e2:Disconnect() return end
+        
+        if key == "w" then
+            keys.w = true
+        elseif key == "s" then
+            keys.s = true
+        elseif key == "a" then
+            keys.a = true
+        elseif key == "d" then
+            keys.d = true
+        elseif key:lower() == Main.Configuration.KeyFly:lower() then
+            Main.Configuration.Fly = not Main.Configuration.Fly
+        end
+    end)
 
--- Boucle pour surveiller les changements externes de Main.Configuration.Fly
+    e2 = mouse.KeyUp:Connect(function(key)
+        if key == "w" then
+            keys.w = false
+        elseif key == "s" then
+            keys.s = false
+        elseif key == "a" then
+            keys.a = false
+        elseif key == "d" then
+            keys.d = false
+        end
+    end)
+end
+
+-- Boucle pour surveiller les changements de Fly et KeyFly
 spawn(function()
+    local lastKey = Main.Configuration.KeyFly
     while true do
         RunService.Heartbeat:Wait()
+        
+        -- Si la touche de vol a changé, on met à jour les listeners
+        if Main.Configuration.KeyFly ~= lastKey then
+            lastKey = Main.Configuration.KeyFly
+            setupKeyListener()
+        end
+
+        -- Si Fly change, on active/désactive dynamiquement
         if Main.Configuration.Fly ~= flying then
             if Main.Configuration.Fly then
                 start()
@@ -136,5 +151,8 @@ spawn(function()
         end
     end
 end)
+
+-- Initialisation des touches
+setupKeyListener()
 
 return Main
