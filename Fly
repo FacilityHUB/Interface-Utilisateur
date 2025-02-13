@@ -2,15 +2,6 @@ local RunService = game:GetService("RunService")
 
 local Main = {}
 
-local Main = {
-    _flying = false,
-    _vehicleFlying = false,
-    _keys = {a=false, d=false, w=false, s=false},
-    _torso = nil,
-    _keyDownConnection = nil,
-    _keyUpConnection = nil
-}
-
 Main.Configuration = {
     Fly = false,        
     SpeedFly = 7.5,     
@@ -20,16 +11,19 @@ Main.Configuration = {
     SpeedVehicleFly = 250, 
     KeyVehicleFly = "e" 
 }
-
 function Main.Load()
-    local plr = game.Players.LocalPlayer
-    local mouse = plr:GetMouse()
-    local localplayer = plr
+local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+local localplayer = plr
+local torso
+local keys = {a=false, d=false, w=false, s=false}
+local flying = false
+local vehicleFlying = false
+local keyDownConnection, keyUpConnection
 
 local function setupTorso()
     if workspace:FindFirstChild("Core") then
         workspace.Core:Destroy()
-        Main._torso = Core
     end
 
     local Core = Instance.new("Part")
@@ -54,20 +48,19 @@ local function setupTorso()
     torso = Core
 end
 
-    local function stop()
-        Main._flying = false
-        Main.Configuration.Fly = false
-    end
+local function stop()
+    flying = false
+    Main.Configuration.Fly = false
+end
 
-
-    local function start()
-        if not Main._torso then return end
-        Main._flying = true
-        local pos = Instance.new("BodyPosition", Main._torso)
-        local gyro = Instance.new("BodyGyro", Main._torso)
-        pos.Name = "EPIXPOS"
-        pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
-        pos.position = Main._torso.Position
+local function start()
+    if not torso then return end
+    flying = true
+    local pos = Instance.new("BodyPosition", torso)
+    local gyro = Instance.new("BodyGyro", torso)
+    pos.Name = "EPIXPOS"
+    pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+    pos.position = torso.Position
     gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
     gyro.cframe = torso.CFrame
     
@@ -134,14 +127,14 @@ local function toggleVehicleFly()
 end
 
 local function resetKeyEvents()
-        if Main._keyDownConnection then Main._keyDownConnection:Disconnect() end
-        if Main._keyUpConnection then Main._keyUpConnection:Disconnect() end
+    if keyDownConnection then keyDownConnection:Disconnect() end
+    if keyUpConnection then keyUpConnection:Disconnect() end
 
-        Main._keyDownConnection = mouse.KeyDown:Connect(function(key)
-            if key:lower() == "w" then Main._keys.w = true end
-            if key:lower() == "s" then Main._keys.s = true end
-            if key:lower() == "a" then Main._keys.a = true end
-            if key:lower() == "d" then Main._keys.d = true end
+    keyDownConnection = mouse.KeyDown:Connect(function(key)
+        if key:lower() == "w" then keys.w = true end
+        if key:lower() == "s" then keys.s = true end
+        if key:lower() == "a" then keys.a = true end
+        if key:lower() == "d" then keys.d = true end
         
         if key:lower() == Main.Configuration.KeyFly:lower() then
             Main.Configuration.Fly = not Main.Configuration.Fly
@@ -157,25 +150,42 @@ local function resetKeyEvents()
         end
     end)
 
-   Main._keyUpConnection = mouse.KeyUp:Connect(function(key)
-            if key:lower() == "w" then Main._keys.w = false end
-            if key:lower() == "s" then Main._keys.s = false end
-            if key:lower() == "a" then Main._keys.a = false end
-            if key:lower() == "d" then Main._keys.d = false end
-        end)
-    end
-
-    plr.CharacterAdded:Connect(function()
-        wait(1)
-        setupTorso()
-        resetKeyEvents()
-        if Main.Configuration.Fly then
-            start()
-        end
+    keyUpConnection = mouse.KeyUp:Connect(function(key)
+        if key:lower() == "w" then keys.w = false end
+        if key:lower() == "s" then keys.s = false end
+        if key:lower() == "a" then keys.a = false end
+        if key:lower() == "d" then keys.d = false end
     end)
-
-    setupTorso()
-    resetKeyEvents()
 end
 
+plr.CharacterAdded:Connect(function()
+    wait(1)
+    setupTorso()
+    resetKeyEvents()
+    if Main.Configuration.Fly then
+        start()
+    end
+end)
+
+function Main.SetFly(state)
+    Main.Configuration.Fly = state
+    if state then
+        start()
+    else
+        stop()
+    end
+end
+
+function Main.SetVehicleFly(state)
+    Main.Configuration.VehicleFly = state
+    if state then
+        startVehicleFly()
+    else
+        vehicleFlying = false
+    end
+end
+
+setupTorso()
+resetKeyEvents()
+end
 return Main
