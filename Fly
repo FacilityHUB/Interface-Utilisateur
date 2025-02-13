@@ -11,7 +11,7 @@ Main.Configuration = {
     SpeedVehicleFly = 250, 
     KeyVehicleFly = "e" 
 }
-
+function Main.Load()
 local plr = game.Players.LocalPlayer
 local mouse = plr:GetMouse()
 local localplayer = plr
@@ -169,5 +169,5 @@ end)
 
 setupTorso()
 resetKeyEvents()
-
+end
 return Main
