@@ -11,181 +11,189 @@ Main.Configuration = {
     SpeedVehicleFly = 250, 
     KeyVehicleFly = "e" 
 }
+
 function Main.Load()
-local plr = game.Players.LocalPlayer
-local mouse = plr:GetMouse()
-local localplayer = plr
-local torso
-local keys = {a=false, d=false, w=false, s=false}
-local flying = false
-local vehicleFlying = false
-local keyDownConnection, keyUpConnection
+    local plr = game.Players.LocalPlayer
+    local mouse = plr:GetMouse()
+    local localplayer = plr
+    local torso
+    local keys = {a=false, d=false, w=false, s=false}
+    local flying = false
+    local vehicleFlying = false
+    local keyDownConnection, keyUpConnection
+    local lastKeyFly = Main.Configuration.KeyFly
+    local lastKeyVehicleFly = Main.Configuration.KeyVehicleFly
+    local lastFlyState = Main.Configuration.Fly
+    local lastVehicleFlyState = Main.Configuration.VehicleFly
 
-local function setupTorso()
-    if workspace:FindFirstChild("Core") then
-        workspace.Core:Destroy()
-    end
+    local function setupTorso()
+        if workspace:FindFirstChild("Core") then
+            workspace.Core:Destroy()
+        end
 
-    local Core = Instance.new("Part")
-    Core.Name = "Core"
-    Core.Size = Vector3.new(0.05, 0.05, 0.05)
-    
-    Core.Parent = workspace
-    local Weld = Instance.new("Weld", Core)
-    Weld.Part0 = Core
-    local torsoName = "HumanoidRootPart"
-    
-    if localplayer.Character:FindFirstChild("Torso") then
-        torsoName = "Torso"
-    elseif localplayer.Character:FindFirstChild("UpperTorso") then
-        torsoName = "UpperTorso"
-    elseif localplayer.Character:FindFirstChild("LowerTorso") then
-        torsoName = "LowerTorso"
-    end
-    
-    Weld.Part1 = localplayer.Character:WaitForChild(torsoName)
-    Weld.C0 = CFrame.new(0, 0, 0)
-    torso = Core
-end
-
-local function stop()
-    flying = false
-    Main.Configuration.Fly = false
-end
-
-local function start()
-    if not torso then return end
-    flying = true
-    local pos = Instance.new("BodyPosition", torso)
-    local gyro = Instance.new("BodyGyro", torso)
-    pos.Name = "EPIXPOS"
-    pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
-    pos.position = torso.Position
-    gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-    gyro.cframe = torso.CFrame
-    
-    repeat
-        RunService.Heartbeat:Wait()
-        localplayer.Character.Humanoid.PlatformStand = true
-        local new = gyro.cframe - gyro.cframe.p + pos.position
+        local Core = Instance.new("Part")
+        Core.Name = "Core"
+        Core.Size = Vector3.new(0.05, 0.05, 0.05)
         
-        if keys.w then
-            new = new + workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
-        end
-        if keys.s then
-            new = new - workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
-        end
-        if keys.d then
-            new = new * CFrame.new(Main.Configuration.SpeedFly, 0, 0)
-        end
-        if keys.a then
-            new = new * CFrame.new(-Main.Configuration.SpeedFly, 0, 0)
+        Core.Parent = workspace
+        local Weld = Instance.new("Weld", Core)
+        Weld.Part0 = Core
+        local torsoName = "HumanoidRootPart"
+        
+        if localplayer.Character:FindFirstChild("Torso") then
+            torsoName = "Torso"
+        elseif localplayer.Character:FindFirstChild("UpperTorso") then
+            torsoName = "UpperTorso"
+        elseif localplayer.Character:FindFirstChild("LowerTorso") then
+            torsoName = "LowerTorso"
         end
         
-        pos.position = new.p
-        gyro.cframe = workspace.CurrentCamera.CFrame
-    until not Main.Configuration.Fly
-
-    gyro:Destroy()
-    pos:Destroy()
-    localplayer.Character.Humanoid.PlatformStand = false
-end
-
-local function startVehicleFly()
-    local seat = plr.Character and plr.Character.Humanoid.SeatPart
-    if not seat then return end
-
-    local bg = Instance.new("BodyGyro", seat)
-    bg.P = 9e4
-    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bg.cframe = seat.CFrame
-
-    local bv = Instance.new("BodyVelocity", seat)
-    bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-    bv.velocity = Vector3.new(0, 0, 0)
-
-    vehicleFlying = true
-    repeat
-        RunService.Heartbeat:Wait()
-        local moveVector = (workspace.CurrentCamera.CFrame.lookVector * (keys.w and 1 or keys.s and -1 or 0))
-            + ((workspace.CurrentCamera.CFrame * CFrame.new((keys.a and -1 or keys.d and 1 or 0), 0, 0).p)
-            - workspace.CurrentCamera.CFrame.p)
-        bv.velocity = moveVector * Main.Configuration.SpeedVehicleFly
-        bg.CFrame = seat.CFrame
-    until not Main.Configuration.VehicleFly
-
-    bg:Destroy()
-    bv:Destroy()
-    vehicleFlying = false
-end
-
-local function toggleVehicleFly()
-    Main.Configuration.VehicleFly = not Main.Configuration.VehicleFly
-    if Main.Configuration.VehicleFly then
-        startVehicleFly()
+        Weld.Part1 = localplayer.Character:WaitForChild(torsoName)
+        Weld.C0 = CFrame.new(0, 0, 0)
+        torso = Core
     end
-end
 
-local function resetKeyEvents()
-    if keyDownConnection then keyDownConnection:Disconnect() end
-    if keyUpConnection then keyUpConnection:Disconnect() end
+    local function stop()
+        flying = false
+        Main.Configuration.Fly = false
+    end
 
-    keyDownConnection = mouse.KeyDown:Connect(function(key)
-        if key:lower() == "w" then keys.w = true end
-        if key:lower() == "s" then keys.s = true end
-        if key:lower() == "a" then keys.a = true end
-        if key:lower() == "d" then keys.d = true end
+    local function start()
+        if not torso then return end
+        flying = true
+        local pos = Instance.new("BodyPosition", torso)
+        local gyro = Instance.new("BodyGyro", torso)
+        pos.Name = "EPIXPOS"
+        pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+        pos.position = torso.Position
+        gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        gyro.cframe = torso.CFrame
         
-        if key:lower() == Main.Configuration.KeyFly:lower() then
-            Main.Configuration.Fly = not Main.Configuration.Fly
-            if Main.Configuration.Fly then
-                start()
-            else
-                stop()
+        repeat
+            RunService.Heartbeat:Wait()
+            localplayer.Character.Humanoid.PlatformStand = true
+            local new = gyro.cframe - gyro.cframe.p + pos.position
+            
+            if keys.w then
+                new = new + workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
             end
-        end
-        
-        if key:lower() == Main.Configuration.KeyVehicleFly:lower() then
-            toggleVehicleFly()
-        end
-    end)
+            if keys.s then
+                new = new - workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
+            end
+            if keys.d then
+                new = new * CFrame.new(Main.Configuration.SpeedFly, 0, 0)
+            end
+            if keys.a then
+                new = new * CFrame.new(-Main.Configuration.SpeedFly, 0, 0)
+            end
+            
+            pos.position = new.p
+            gyro.cframe = workspace.CurrentCamera.CFrame
+        until not Main.Configuration.Fly
 
-    keyUpConnection = mouse.KeyUp:Connect(function(key)
-        if key:lower() == "w" then keys.w = false end
-        if key:lower() == "s" then keys.s = false end
-        if key:lower() == "a" then keys.a = false end
-        if key:lower() == "d" then keys.d = false end
-    end)
-end
-
-plr.CharacterAdded:Connect(function()
-    wait(1)
-    setupTorso()
-    resetKeyEvents()
-    if Main.Configuration.Fly then
-        start()
+        gyro:Destroy()
+        pos:Destroy()
+        localplayer.Character.Humanoid.PlatformStand = false
     end
-end)
 
-function Main.SetFly(state)
-    Main.Configuration.Fly = state
-    if state then
-        start()
-    else
-        stop()
-    end
-end
+    local function startVehicleFly()
+        local seat = plr.Character and plr.Character.Humanoid.SeatPart
+        if not seat then return end
 
-function Main.SetVehicleFly(state)
-    Main.Configuration.VehicleFly = state
-    if state then
-        startVehicleFly()
-    else
+        local bg = Instance.new("BodyGyro", seat)
+        bg.P = 9e4
+        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.cframe = seat.CFrame
+
+        local bv = Instance.new("BodyVelocity", seat)
+        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+        bv.velocity = Vector3.new(0, 0, 0)
+
+        vehicleFlying = true
+        repeat
+            RunService.Heartbeat:Wait()
+            local moveVector = (workspace.CurrentCamera.CFrame.lookVector * (keys.w and 1 or keys.s and -1 or 0))
+                + ((workspace.CurrentCamera.CFrame * CFrame.new((keys.a and -1 or keys.d and 1 or 0), 0, 0).p)
+                - workspace.CurrentCamera.CFrame.p)
+            bv.velocity = moveVector * Main.Configuration.SpeedVehicleFly
+            bg.CFrame = seat.CFrame
+        until not Main.Configuration.VehicleFly
+
+        bg:Destroy()
+        bv:Destroy()
         vehicleFlying = false
     end
+
+    local function resetKeyEvents()
+        if keyDownConnection then keyDownConnection:Disconnect() end
+        if keyUpConnection then keyUpConnection:Disconnect() end
+
+        keyDownConnection = mouse.KeyDown:Connect(function(key)
+            if key:lower() == "w" then keys.w = true end
+            if key:lower() == "s" then keys.s = true end
+            if key:lower() == "a" then keys.a = true end
+            if key:lower() == "d" then keys.d = true end
+            
+            if key:lower() == Main.Configuration.KeyFly:lower() then
+                Main.Configuration.Fly = not Main.Configuration.Fly
+            end
+            
+            if key:lower() == Main.Configuration.KeyVehicleFly:lower() then
+                Main.Configuration.VehicleFly = not Main.Configuration.VehicleFly
+            end
+        end)
+
+        keyUpConnection = mouse.KeyUp:Connect(function(key)
+            if key:lower() == "w" then keys.w = false end
+            if key:lower() == "s" then keys.s = false end
+            if key:lower() == "a" then keys.a = false end
+            if key:lower() == "d" then keys.d = false end
+        end)
+    end
+
+    -- Boucle pour surveiller les changements de KeyFly, KeyVehicleFly, Fly et VehicleFly
+    spawn(function()
+        while true do
+            RunService.Heartbeat:Wait()
+            
+            if Main.Configuration.KeyFly ~= lastKeyFly then
+                lastKeyFly = Main.Configuration.KeyFly
+                resetKeyEvents()
+            end
+
+            if Main.Configuration.KeyVehicleFly ~= lastKeyVehicleFly then
+                lastKeyVehicleFly = Main.Configuration.KeyVehicleFly
+                resetKeyEvents()
+            end
+
+            if Main.Configuration.Fly ~= lastFlyState then
+                lastFlyState = Main.Configuration.Fly
+                if Main.Configuration.Fly then
+                    start()
+                else
+                    stop()
+                end
+            end
+
+            if Main.Configuration.VehicleFly ~= lastVehicleFlyState then
+                lastVehicleFlyState = Main.Configuration.VehicleFly
+                if Main.Configuration.VehicleFly then
+                    startVehicleFly()
+                else
+                    vehicleFlying = false
+                end
+            end
+        end
+    end)
+
+    plr.CharacterAdded:Connect(function()
+        wait(1)
+        setupTorso()
+        resetKeyEvents()
+    end)
+
+    setupTorso()
+    resetKeyEvents()
 end
 
-setupTorso()
-resetKeyEvents()
-end
 return Main
