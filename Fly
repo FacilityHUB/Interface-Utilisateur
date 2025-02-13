@@ -17,7 +17,7 @@ function Main.Load()
     local mouse = plr:GetMouse()
     local localplayer = plr
     local torso
-    local keys = {a=false, d=false, w=false, s=false}
+    local keys = {w=false, a=false, s=false, d=false}
     local flying = false
     local vehicleFlying = false
     local keyDownConnection, keyUpConnection
@@ -72,22 +72,29 @@ function Main.Load()
         repeat
             RunService.Heartbeat:Wait()
             localplayer.Character.Humanoid.PlatformStand = true
-            local new = gyro.cframe - gyro.cframe.p + pos.position
+
+            -- Vérifier si aucune touche n'est pressée
+            if not keys.w and not keys.a and not keys.s and not keys.d then
+                pos.position = torso.Position  -- Stop immédiat
+            else
+                local new = gyro.cframe - gyro.cframe.p + pos.position
+                
+                if keys.w then
+                    new = new + workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
+                end
+                if keys.s then
+                    new = new - workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
+                end
+                if keys.d then
+                    new = new * CFrame.new(Main.Configuration.SpeedFly, 0, 0)
+                end
+                if keys.a then
+                    new = new * CFrame.new(-Main.Configuration.SpeedFly, 0, 0)
+                end
+                
+                pos.position = new.p
+            end
             
-            if keys.w then
-                new = new + workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
-            end
-            if keys.s then
-                new = new - workspace.CurrentCamera.CFrame.lookVector * Main.Configuration.SpeedFly
-            end
-            if keys.d then
-                new = new * CFrame.new(Main.Configuration.SpeedFly, 0, 0)
-            end
-            if keys.a then
-                new = new * CFrame.new(-Main.Configuration.SpeedFly, 0, 0)
-            end
-            
-            pos.position = new.p
             gyro.cframe = workspace.CurrentCamera.CFrame
         until not Main.Configuration.Fly
 
@@ -107,15 +114,21 @@ function Main.Load()
 
         local bv = Instance.new("BodyVelocity", seat)
         bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        bv.velocity = Vector3.new(0, 0, 0)
 
         vehicleFlying = true
         repeat
             RunService.Heartbeat:Wait()
-            local moveVector = (workspace.CurrentCamera.CFrame.lookVector * (keys.w and 1 or keys.s and -1 or 0))
-                + ((workspace.CurrentCamera.CFrame * CFrame.new((keys.a and -1 or keys.d and 1 or 0), 0, 0).p)
-                - workspace.CurrentCamera.CFrame.p)
-            bv.velocity = moveVector * Main.Configuration.SpeedVehicleFly
+
+            -- Vérifier si aucune touche n'est pressée
+            if not keys.w and not keys.a and not keys.s and not keys.d then
+                bv.velocity = Vector3.new(0, 0, 0) -- Stop immédiat
+            else
+                local moveVector = (workspace.CurrentCamera.CFrame.lookVector * (keys.w and 1 or keys.s and -1 or 0))
+                    + ((workspace.CurrentCamera.CFrame * CFrame.new((keys.a and -1 or keys.d and 1 or 0), 0, 0).p)
+                    - workspace.CurrentCamera.CFrame.p)
+                bv.velocity = moveVector * Main.Configuration.SpeedVehicleFly
+            end
+
             bg.CFrame = seat.CFrame
         until not Main.Configuration.VehicleFly
 
