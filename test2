@@ -118,17 +118,26 @@ local function getClosestPlayer(trg_part)
                 local distanceFromPlayer = (Cam.CFrame.Position - part.Position).Magnitude
 
                 if Aimbot.Configuration.TeamCheck then
-                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
-                        and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    -- Récupérer les informations de l'équipe et de la couleur d'équipe du joueur local et de la cible
+                    local localTeam = player.Team
+                    local targetTeam = targetPlayer.Team
+                    local localTeamColor = localTeam and localTeam.TeamColor
+                    local targetTeamColor = targetTeam and targetTeam.TeamColor
                     
-                    -- Vérification de l'appartenance à la même équipe
-                    local sameTeam = player.Team and localPlayer.Team and player.Team == localPlayer.Team
-                
-                    if sameFaction or hasTeammateLabel or sameTeam then
+                    -- Comparer Team et TeamColor
+                    local sameTeam = localTeam == targetTeam
+                    local sameTeamColor = localTeamColor == targetTeamColor
+                    
+                    -- Vérifier si les factions sont identiques ou si la cible a un label de coéquipier
+                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
+                    local hasTeammateLabel = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") 
+                        and targetPlayer.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    
+                    -- Si le joueur appartient à la même équipe ou a un label de coéquipier, continuer
+                    if sameFaction or sameTeam or sameTeamColor or hasTeammateLabel then
                         continue
                     end
-                end 
+                end                
                 
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
@@ -174,19 +183,26 @@ local function getLowestHealthPlayer(trg_part)
                 local distanceFromPlayer = (Cam.CFrame.Position - part.Position).Magnitude
                 
                 if Aimbot.Configuration.TeamCheck then
-                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
-                        and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    -- Récupérer les informations de l'équipe et de la couleur d'équipe du joueur local et de la cible
+                    local localTeam = player.Team
+                    local targetTeam = targetPlayer.Team
+                    local localTeamColor = localTeam and localTeam.TeamColor
+                    local targetTeamColor = targetTeam and targetTeam.TeamColor
                     
-                    -- Vérification de l'appartenance à la même équipe
-                    local sameTeam = player.Team and localPlayer.Team and player.Team == localPlayer.Team
-                
-                    if sameFaction or hasTeammateLabel or sameTeam then
+                    -- Comparer Team et TeamColor
+                    local sameTeam = localTeam == targetTeam
+                    local sameTeamColor = localTeamColor == targetTeamColor
+                    
+                    -- Vérifier si les factions sont identiques ou si la cible a un label de coéquipier
+                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
+                    local hasTeammateLabel = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") 
+                        and targetPlayer.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    
+                    -- Si le joueur appartient à la même équipe ou a un label de coéquipier, continuer
+                    if sameFaction or sameTeam or sameTeamColor or hasTeammateLabel then
                         continue
                     end
-                end
-                
-                
+                end                
                 
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
@@ -233,19 +249,26 @@ local function getPlayerClosestToCursor(trg_part)
                 local distanceToCursor = (Vector2.new(screenPosition.X, screenPosition.Y) - mousePosition).Magnitude
                 
                 if Aimbot.Configuration.TeamCheck then
-                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
-                        and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    -- Récupérer les informations de l'équipe et de la couleur d'équipe du joueur local et de la cible
+                    local localTeam = player.Team
+                    local targetTeam = targetPlayer.Team
+                    local localTeamColor = localTeam and localTeam.TeamColor
+                    local targetTeamColor = targetTeam and targetTeam.TeamColor
                     
-                    -- Vérification de l'appartenance à la même équipe
-                    local sameTeam = player.Team and localPlayer.Team and player.Team == localPlayer.Team
-                
-                    if sameFaction or hasTeammateLabel or sameTeam then
+                    -- Comparer Team et TeamColor
+                    local sameTeam = localTeam == targetTeam
+                    local sameTeamColor = localTeamColor == targetTeamColor
+                    
+                    -- Vérifier si les factions sont identiques ou si la cible a un label de coéquipier
+                    local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
+                    local hasTeammateLabel = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") 
+                        and targetPlayer.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    
+                    -- Si le joueur appartient à la même équipe ou a un label de coéquipier, continuer
+                    if sameFaction or sameTeam or sameTeamColor or hasTeammateLabel then
                         continue
                     end
-                end
-                
-                
+                end                     
                 
                 local distanceFromPlayer = (Cam.CFrame.Position - part.Position).Magnitude
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
