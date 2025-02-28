@@ -119,17 +119,14 @@ local function getClosestPlayer(trg_part)
 
                 if Aimbot.Configuration.TeamCheck then
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character 
-                        and player.Character:FindFirstChild("HumanoidRootPart") 
+                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
-                    local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                    local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
-                
-                    if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
+                    if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end       
+                end     
                 
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
@@ -176,17 +173,14 @@ local function getLowestHealthPlayer(trg_part)
                 
                 if Aimbot.Configuration.TeamCheck then
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character 
-                        and player.Character:FindFirstChild("HumanoidRootPart") 
+                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
-                        local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                        local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
-                
-                    if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
+                    if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end       
+                end   
 
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
@@ -234,17 +228,14 @@ local function getPlayerClosestToCursor(trg_part)
                 
                 if Aimbot.Configuration.TeamCheck then
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
-                    local hasTeammateLabel = player.Character 
-                        and player.Character:FindFirstChild("HumanoidRootPart") 
+                    local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
+                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
-                        local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                        local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
-                
-                    if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
+                    if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end                
+                end                 
 
                 local distanceFromPlayer = (Cam.CFrame.Position - part.Position).Magnitude
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
