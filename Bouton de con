@@ -123,8 +123,8 @@ local function getClosestPlayer(trg_part)
                         and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
                     
-                    local sameTeam = player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                    local sameTeamColor = player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
+                    local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
+                    local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
                 
                     if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
                         continue
@@ -180,8 +180,8 @@ local function getLowestHealthPlayer(trg_part)
                         and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
                     
-                    local sameTeam = player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                    local sameTeamColor = player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
+                        local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
+                        local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
                 
                     if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
                         continue
@@ -238,8 +238,8 @@ local function getPlayerClosestToCursor(trg_part)
                         and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
                     
-                    local sameTeam = player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
-                    local sameTeamColor = player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
+                        local sameTeam = player and LocalPlayer and player.Team and LocalPlayer.Team and player.Team == LocalPlayer.Team
+                        local sameTeamColor = player and LocalPlayer and player.TeamColor and LocalPlayer.TeamColor and player.TeamColor == LocalPlayer.TeamColor
                 
                     if sameFaction or hasTeammateLabel or sameTeam or sameTeamColor then
                         continue
