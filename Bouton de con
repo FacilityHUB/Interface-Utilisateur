@@ -121,12 +121,13 @@ local function getClosestPlayer(trg_part)
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
                     local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
-                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
+                    local sameTeamColor = player.TeamColor and localPlayer.TeamColor and player.TeamColor == localPlayer.TeamColor  -- Vérification de TeamColor
+                
                     if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end     
+                end                
                 
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
@@ -175,13 +176,14 @@ local function getLowestHealthPlayer(trg_part)
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
                     local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
-                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
+                    local sameTeamColor = player.TeamColor and localPlayer.TeamColor and player.TeamColor == localPlayer.TeamColor  -- Vérification de TeamColor
+                
                     if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end   
-
+                end
+                
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
                 end
@@ -230,13 +232,14 @@ local function getPlayerClosestToCursor(trg_part)
                     local sameFaction = localFaction and targetFaction and localFaction.Value == targetFaction.Value
                     local hasTeammateLabel = player.Character and player.Character:FindFirstChild("HumanoidRootPart") 
                         and player.Character.HumanoidRootPart:FindFirstChild("TeammateLabel")
-                    local sameTeamColor = player.TeamColor == localPlayer.TeamColor  
                     
+                    local sameTeamColor = player.TeamColor and localPlayer.TeamColor and player.TeamColor == localPlayer.TeamColor  -- Vérification de TeamColor
+                
                     if sameFaction or hasTeammateLabel or sameTeamColor then
                         continue
                     end
-                end                 
-
+                end
+                
                 local distanceFromPlayer = (Cam.CFrame.Position - part.Position).Magnitude
                 if distanceFromPlayer > Aimbot.Configuration.maxDistance then
                     continue
