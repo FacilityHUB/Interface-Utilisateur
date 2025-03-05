@@ -205,6 +205,11 @@ function Main.Load()
             if key:lower() == "s" then keys.s = false end
             if key:lower() == "a" then keys.a = false end
             if key:lower() == "d" then keys.d = false end
+            
+            if key:lower() == Main.Configuration.KeyNoclip:lower() then
+                Main.Configuration.Noclip = not Main.Configuration.Noclip
+                UpdateNoclip()
+            end
         end)
     end
 
@@ -212,11 +217,6 @@ function Main.Load()
     spawn(function()
         while true do
             RunService.Heartbeat:Wait()
-
-            if key:lower() == Main.Configuration.KeyNoclip:lower() then
-                Main.Configuration.Noclip = not Main.Configuration.Noclip
-                UpdateNoclip()
-            end
             
             if Main.Configuration.Noclip ~= lastNoclipState then
                 lastNoclipState = Main.Configuration.Noclip
