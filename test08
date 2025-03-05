@@ -37,6 +37,7 @@ function Main.Load()
         if localplayer.Character then
             for _, child in pairs(localplayer.Character:GetDescendants()) do
                 if child:IsA("BasePart") then
+                    -- Sauvegarde l'état de CanCollide de chaque partie
                     initialCollisions[child] = child.CanCollide
                 end
             end
@@ -47,18 +48,25 @@ function Main.Load()
         if localplayer.Character then
             for _, child in pairs(localplayer.Character:GetDescendants()) do
                 if child:IsA("BasePart") then
-                    child.CanCollide = not state
+                    if state then
+                        -- Lors du noclip, on désactive CanCollide pour toutes les parties
+                        child.CanCollide = false
+                    else
+                        -- Lorsque le noclip est désactivé, on rétablit l'état initial de CanCollide
+                        child.CanCollide = initialCollisions[child] or true
+                    end
                 end
             end
         end
     end
     
+    -- Cette fonction s'assure que le noclip est appliqué correctement
     local function UpdateNoclip()
         if Main.Configuration.Noclip then
-            SaveInitialCollisions()
+            SaveInitialCollisions()  -- Sauvegarde l'état initial des collisions
             if not noclipConnection then
                 noclipConnection = RunService.Stepped:Connect(function()
-                    SetNoclip(true)
+                    SetNoclip(true)  -- Applique le noclip
                 end)
             end
         else
@@ -66,9 +74,10 @@ function Main.Load()
                 noclipConnection:Disconnect()
                 noclipConnection = nil
             end
-            SetNoclip(false)
+            SetNoclip(false)  -- Désactive le noclip et restaure les collisions
         end
-    end    
+    end
+    
 
     local function setupTorso()
         if workspace:FindFirstChild("Core") then
@@ -115,7 +124,7 @@ function Main.Load()
         
         repeat
             RunService.Heartbeat:Wait()
-            
+            localplayer.Character.Humanoid.PlatformStand = true
 
             -- Vérifier si aucune touche n'est pressée
             if not keys.w and not keys.a and not keys.s and not keys.d then
