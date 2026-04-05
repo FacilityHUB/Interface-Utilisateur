@@ -1,0 +1,41 @@
+return {
+    TextColor = Color3.fromRGB(170, 170, 204), -- gris-bleu doux
+
+    Background = Color3.fromRGB(10, 10, 15), -- presque noir
+    Topbar = Color3.fromRGB(19, 19, 26), -- noir-bleu très sombre
+    Shadow = Color3.fromRGB(30, 30, 50), -- ombre discrète froide
+
+    NotificationBackground = Color3.fromRGB(15, 15, 22),
+    NotificationActionsBackground = Color3.fromRGB(42, 42, 255), -- bleu accent sobre
+
+    TabBackground = Color3.fromRGB(28, 28, 40),
+    TabStroke = Color3.fromRGB(46, 46, 66),
+    TabBackgroundSelected = Color3.fromRGB(37, 37, 53),
+    TabTextColor = Color3.fromRGB(106, 106, 154),
+    SelectedTabTextColor = Color3.fromRGB(170, 170, 204),
+
+    ElementBackground = Color3.fromRGB(18, 18, 26),
+    ElementBackgroundHover = Color3.fromRGB(26, 26, 38),
+    SecondaryElementBackground = Color3.fromRGB(13, 13, 20),
+    ElementStroke = Color3.fromRGB(30, 30, 44),
+    SecondaryElementStroke = Color3.fromRGB(37, 37, 53),
+
+    SliderBackground = Color3.fromRGB(26, 26, 40),
+    SliderProgress = Color3.fromRGB(58, 58, 255), -- bleu froid
+    SliderStroke = Color3.fromRGB(85, 85, 187),
+
+    ToggleBackground = Color3.fromRGB(37, 37, 53),
+    ToggleEnabled = Color3.fromRGB(58, 58, 255),
+    ToggleDisabled = Color3.fromRGB(80, 80, 112),
+    ToggleEnabledStroke = Color3.fromRGB(80, 80, 255),
+    ToggleDisabledStroke = Color3.fromRGB(48, 48, 69),
+    ToggleEnabledOuterStroke = Color3.fromRGB(42, 42, 180),
+    ToggleDisabledOuterStroke = Color3.fromRGB(30, 30, 44),
+
+    DropdownSelected = Color3.fromRGB(26, 26, 40),
+    DropdownUnselected = Color3.fromRGB(18, 18, 28),
+
+    InputBackground = Color3.fromRGB(16, 16, 26),
+    InputStroke = Color3.fromRGB(34, 34, 53),
+    PlaceholderColor = Color3.fromRGB(74, 74, 106)
+}
