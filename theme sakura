@@ -1,0 +1,41 @@
+return {
+    TextColor = Color3.fromRGB(252, 230, 235), -- Text (Rose très clair)
+    
+    Background = Color3.fromRGB(40, 25, 35), -- Background (Prune sombre)
+    Topbar = Color3.fromRGB(50, 30, 40), -- Un peu plus clair que le fond
+    Shadow = Color3.fromRGB(20, 10, 15), -- Ombre discrète
+    
+    NotificationBackground = Color3.fromRGB(40, 25, 35), -- Notification
+    NotificationActionsBackground = Color3.fromRGB(60, 35, 50), -- Element
+    
+    TabBackground = Color3.fromRGB(60, 35, 50), -- Element
+    TabStroke = Color3.fromRGB(252, 209, 215), -- Accent / Stroke
+    TabBackgroundSelected = Color3.fromRGB(150, 100, 120), -- Toggle/SliderRail
+    TabTextColor = Color3.fromRGB(220, 180, 195), -- SubText
+    SelectedTabTextColor = Color3.fromRGB(252, 230, 235), -- Text
+    
+    ElementBackground = Color3.fromRGB(60, 35, 50), -- Element
+    ElementBackgroundHover = Color3.fromRGB(80, 45, 65), -- Variante hover plus claire
+    SecondaryElementBackground = Color3.fromRGB(50, 30, 45),
+    ElementStroke = Color3.fromRGB(252, 209, 215), -- Stroke (Rose pâle)
+    SecondaryElementStroke = Color3.fromRGB(150, 100, 120), -- Plus discret
+            
+    SliderBackground = Color3.fromRGB(150, 100, 120), -- SliderRail
+    SliderProgress = Color3.fromRGB(252, 209, 215), -- SliderHead / Accent
+    SliderStroke = Color3.fromRGB(252, 209, 215),
+    
+    ToggleBackground = Color3.fromRGB(150, 100, 120), -- Toggle
+    ToggleEnabled = Color3.fromRGB(252, 209, 215), -- ToggleHead
+    ToggleDisabled = Color3.fromRGB(80, 60, 70),
+    ToggleEnabledStroke = Color3.fromRGB(252, 209, 215),
+    ToggleDisabledStroke = Color3.fromRGB(100, 80, 90),
+    ToggleEnabledOuterStroke = Color3.fromRGB(252, 209, 215),
+    ToggleDisabledOuterStroke = Color3.fromRGB(40, 25, 35),
+    
+    DropdownSelected = Color3.fromRGB(150, 100, 120),
+    DropdownUnselected = Color3.fromRGB(60, 35, 50), -- DropdownBg
+    
+    InputBackground = Color3.fromRGB(60, 35, 50),
+    InputStroke = Color3.fromRGB(252, 209, 215),
+    PlaceholderColor = Color3.fromRGB(220, 180, 195) -- SubText
+}
