@@ -1,0 +1,41 @@
+return {
+    TextColor = Color3.fromHex("#e9d9f2"), -- Text
+    
+    Background = Color3.fromHex("#120024"), -- Background
+    Topbar = Color3.fromHex("#1a0030"),
+    Shadow = Color3.fromHex("#090012"),
+    
+    NotificationBackground = Color3.fromHex("#120024"),
+    NotificationActionsBackground = Color3.fromHex("#25013c"),
+    
+    TabBackground = Color3.fromHex("#25013c"),
+    TabStroke = Color3.fromHex("#b133ff"),
+    TabBackgroundSelected = Color3.fromHex("#4d057b"),
+    TabTextColor = Color3.fromHex("#9e85ad"),
+    SelectedTabTextColor = Color3.fromHex("#e9d9f2"),
+    
+    ElementBackground = Color3.fromHex("#25013c"),
+    ElementBackgroundHover = Color3.fromHex("#32014f"),
+    SecondaryElementBackground = Color3.fromHex("#1d012f"),
+    ElementStroke = Color3.fromHex("#4d057b"),
+    SecondaryElementStroke = Color3.fromHex("#3a045d"),
+            
+    SliderBackground = Color3.fromHex("#4d057b"),
+    SliderProgress = Color3.fromHex("#b133ff"),
+    SliderStroke = Color3.fromHex("#b133ff"),
+    
+    ToggleBackground = Color3.fromHex("#4d057b"),
+    ToggleEnabled = Color3.fromHex("#e9d9f2"),
+    ToggleDisabled = Color3.fromHex("#2b1a36"),
+    ToggleEnabledStroke = Color3.fromHex("#b133ff"),
+    ToggleDisabledStroke = Color3.fromHex("#463357"),
+    ToggleEnabledOuterStroke = Color3.fromHex("#b133ff"),
+    ToggleDisabledOuterStroke = Color3.fromHex("#120024"),
+    
+    DropdownSelected = Color3.fromHex("#4d057b"),
+    DropdownUnselected = Color3.fromHex("#25013c"),
+    
+    InputBackground = Color3.fromHex("#25013c"),
+    InputStroke = Color3.fromHex("#b133ff"),
+    PlaceholderColor = Color3.fromHex("#9e85ad")
+}
